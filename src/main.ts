@@ -3,10 +3,12 @@ import { draw, Bars } from './canvas'
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
     <div>
-        <h1>Canvas practice</h1>
-        <canvas id="micanvas"></canvas>
+        <h1>Sorting Algorithms</h1>
+        <div class='canvas_container'>
+            <canvas id="micanvas"></canvas>
+        </div>
         <div>
-            <button id='start_button'>Start</button>
+            <button id='start_button'>Restart</button>
             <button id='buble_sort'>BubleSort</button>
             <button id='insertion_sort'>InsertionSort</button>
             <button id='simple_sort'>SimpleSort</button>
@@ -48,7 +50,3 @@ $insertBtn.addEventListener('click', ()=>sortBars('insertion'))
 $simpleBtn.addEventListener('click', ()=>sortBars('simple'))
 $selectBtn.addEventListener('click', ()=>sortBars('selection'))
 $mergeBtn.addEventListener('click', ()=>sortBars('merge'))
-
-// const arr = [2,3,1,65,7,1,2]
-// bars.mergeSort(arr)
-// console.log(arr)

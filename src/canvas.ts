@@ -1,5 +1,5 @@
 export function draw(canvas : HTMLCanvasElement) {
-    canvas.width = 600
+    canvas.width = 800
     canvas.height = 400
 
     const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
@@ -34,7 +34,7 @@ export function draw(canvas : HTMLCanvasElement) {
 
 export class Bars{
     private len: number
-    private containerWidth: number = 400
+    private containerWidth: number = 700
     private parentWidth: number
     private parentHeight: number
     private barWidth: number
@@ -115,8 +115,11 @@ export class Bars{
                 break
             }
             case 'merge' : {
-                swaps = this.mergeSort(copyArr)
-                break
+                this.mergeSort(this.arr).then(()=>{
+                    this.showBars(undefined)
+                })
+                return
+                // break
             }
         } 
         this.animate(swaps, 0)
@@ -135,6 +138,14 @@ export class Bars{
         setTimeout(() => {
             this.animate(swaps, index + 1)
         }, 90)
+    }
+
+    private async animateMerge(indices: number[]) {
+        const [i, j] = indices
+        this.playNote(200 + this.arr[i] * (500 / this.maxH))
+        this.playNote(200 + this.arr[j] * (500 / this.maxH))
+        this.showBars(indices)
+        await new Promise(res => setTimeout(res, 90))
     }
 
     private bubleSort(arr: number[]) {
@@ -193,10 +204,9 @@ export class Bars{
         return swaps
     }
 
-    public mergeSort(arr: number[]) {
-        const swaps: number[][] = []
+    public async mergeSort(arr: number[]) {
 
-        const merge = (arr: number[], p: number, q: number, r: number) => {
+        const merge = async(arr: number[], p: number, q: number, r: number) => {
             let n1 = q - p + 1
             let n2 = r - q
             const L = new Array(n1 + 1)
@@ -213,25 +223,24 @@ export class Bars{
             for (let k = p; k < (r + 1); k++) {
                 if (L[i] < R[j]) {
                     arr[k] = L[i]
-                    swaps.push([k, p + i])
+                    await this.animateMerge([k, p + i])
                     i ++;
                 }
                 else {
                     arr[k] = R[j]
-                    swaps.push([k, q + j + 1])
+                    await this.animateMerge([k, q + j + 1])
                     j ++;
                 }
             }
         } 
-        const _mergeSort = (arr: number[], p: number, r: number) => {
+        const _mergeSort = async(arr: number[], p: number, r: number) => {
             if (p < r) {
                 let q = Math.floor((p + r) / 2)
-                _mergeSort(arr, p, q)
-                _mergeSort(arr, q + 1, r)
-                merge(arr, p, q, r)
+                await _mergeSort(arr, p, q)
+                await _mergeSort(arr, q + 1, r)
+                await merge(arr, p, q, r)
             } 
         }   
-        _mergeSort(arr, 0, arr.length - 1)      
-        return swaps
+        await _mergeSort(arr, 0, arr.length - 1)      
     }
 }
