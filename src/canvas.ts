@@ -106,6 +106,18 @@ export class Bars{
                 swaps = this.insertionSort(copyArr)
                 break
             }
+            case 'simple' : {
+                swaps = this.simpleSort(copyArr)
+                break
+            }
+            case 'selection' : {
+                swaps = this.selectionSort(copyArr)
+                break
+            }
+            case 'merge' : {
+                swaps = this.mergeSort(copyArr)
+                break
+            }
         } 
         this.animate(swaps, 0)
     }
@@ -126,18 +138,15 @@ export class Bars{
     }
 
     private bubleSort(arr: number[]) {
-        let swapped = false
         const swaps = []
-        do {
-            swapped = false
-            for (let i = 1; i < this.len; i++) {
-                if (arr[i - 1] > arr[i]) {
-                    [arr[i - 1], arr[i]] = [arr[i], arr[i - 1]]
-                    swaps.push([i - 1, i])
-                    swapped = true
+        for (let j = 1; j < this.len; j++) {
+            for (let i = 0; i < this.len - 1; i++) {
+                if (arr[i] > arr[i + 1]) {
+                    [arr[i], arr[i + 1]] = [arr[i + 1], arr[i]]
+                    swaps.push([i, i + 1])
                 }
             }
-        } while (swapped)
+        }
         return swaps
     }
 
@@ -156,4 +165,73 @@ export class Bars{
         return swaps
     }
 
+    private simpleSort(arr: number[]) {
+        const swaps = []
+        for (let i = 0; i < this.len; i++) {
+            for (let j = i + 1; j < this.len; j++) {
+                if (arr[j] < arr[i]) {
+                    [arr[i], arr[j]] = [arr[j], arr[i]]
+                    swaps.push([i, j])
+                }
+            }
+        }
+        return swaps
+    }
+
+    private selectionSort(arr: number[]) {
+        const swaps = []
+        for (let i = 0; i < this.len - 1; i++) {
+            let min = i
+            for (let j = i + 1; j < this.len; j++) {
+                if (arr[j] < arr[min]) {
+                    min = j
+                }
+            }
+            [arr[min], arr[i]] = [arr[i], arr[min]]
+            swaps.push([min, i])
+        }
+        return swaps
+    }
+
+    public mergeSort(arr: number[]) {
+        const swaps: number[][] = []
+
+        const merge = (arr: number[], p: number, q: number, r: number) => {
+            let n1 = q - p + 1
+            let n2 = r - q
+            const L = new Array(n1 + 1)
+            const R = new Array(n2 + 1)
+
+            for (let i = 0; i < n1; i++) {
+                L[i] = arr[p + i]
+            }
+            for (let i = 0; i < n2; i++) {
+                R[i] = arr[q + i + 1]
+            }
+            L[n1] = R[n2] = Infinity
+            let i = 0, j = 0
+            for (let k = p; k < (r + 1); k++) {
+                if (L[i] < R[j]) {
+                    arr[k] = L[i]
+                    swaps.push([k, p + i])
+                    i ++;
+                }
+                else {
+                    arr[k] = R[j]
+                    swaps.push([k, q + j + 1])
+                    j ++;
+                }
+            }
+        } 
+        const _mergeSort = (arr: number[], p: number, r: number) => {
+            if (p < r) {
+                let q = Math.floor((p + r) / 2)
+                _mergeSort(arr, p, q)
+                _mergeSort(arr, q + 1, r)
+                merge(arr, p, q, r)
+            } 
+        }   
+        _mergeSort(arr, 0, arr.length - 1)      
+        return swaps
+    }
 }
